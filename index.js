@@ -1,3 +1,7 @@
-// import stuff
+const Node = require('./lib/Node.js');
+const Trie = require('./lib/Trie.js');
 
-//export stuff
+module.exports = {
+  Node,
+  Trie
+}

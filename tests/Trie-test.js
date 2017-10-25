@@ -1,18 +1,10 @@
-// import { assert } from 'chai'
-// import Trie from '../lib/Trie'
-const chai = require('chai');
-const assert = chai.assert;
-const expect = chai.expect;
-
-// import fs from 'fs';
-const fs = require('fs');
+import { assert } from 'chai'
+import fs from 'fs';
+import Trie from '../lib/Trie'
+import Node from '../lib/Node'
 
 const text = "/usr/share/dict/words"
 const dictionary = fs.readFileSync(text).toString().trim().split('\n')
-
-const Trie = require('../lib/Trie.js');
-const Node = require('../lib/Node.js');
-
 
 describe('Trie', () => {
   it('Should be a function', () => {
@@ -71,7 +63,20 @@ describe('Trie', () => {
       trie.insert('apple');
       trie.insert('appeal');
       assert.deepEqual(trie.suggest('piz'), ['pizza']);
-      // expect(trie.suggest('piz')).to.deep.equal(['pizza']);
+    });
+
+    it('Should suggest all words matching the suggestion (small sample)', () => {
+      const trie = new Trie();
+      trie.insert('pizza');
+      trie.insert('apple');
+      trie.insert('appeal');
+      assert.deepEqual(trie.suggest('app'), ['apple', 'appeal'])
+    });
+
+    it('Should suggest all words matching the suggestion (large sample)', () => {
+      const trie = new Trie();
+      trie.populate(dictionary);
+      assert.deepEqual(trie.suggest('piz'), ['pize', 'pizza', 'pizzeria', 'pizzicato', 'pizzle'])
     });
   });
 
@@ -79,14 +84,27 @@ describe('Trie', () => {
     it('Should insert 235886 words from dictionary', () => {
       const trie = new Trie();
       trie.populate(dictionary);
-      assert.equal(trie.count, 235886)
+      assert.equal(trie.count, 235886);
     });
   });
 
   describe('SELECT', () => {
-    it('Should', () => {
+    it('Should select a word from SUGGEST and give that word priority for next SUGGEST (small sample)', () => {
       const trie = new Trie();
+      trie.insert('pizza');
+      trie.insert('apple');
+      trie.insert('appeal');
+      trie.suggest('app');
+      trie.select('appeal');
+      assert.deepEqual(trie.suggest('app'), ['appeal', 'apple']);
+    });
 
+    it('Should select a word from SUGGEST and give that word priority for next SUGGEST (large sample)', () => {
+      const trie = new Trie();
+      trie.populate(dictionary);
+      trie.suggest('piz'); //=> ['pize', 'pizza', 'pizzeria', 'pizzicato', 'pizzle']
+      trie.select('pizzle');
+      assert.deepEqual(trie.suggest('piz'), ['pizzle', 'pize', 'pizza', 'pizzeria', 'pizzicato']);
     });
   });
 });
