@@ -24,7 +24,7 @@ describe('Trie', () => {
   describe('INSERT', () => {
     it('should take in a word', () => {
       const trie = new Trie();
-      trie.insert('PIZZA');
+      trie.insert('pizza');
       assert.equal(trie.count, 1);
       assert.equal(trie.root.children.p.letter, 'p');
     });
@@ -54,16 +54,35 @@ describe('Trie', () => {
       assert.equal(trie.root.children.a.children.p.children.p.children.l.letter, 'l');
       assert.equal(trie.root.children.a.children.p.children.p.children.e.letter, 'e');
     });
+
+    it('should not count duplicate words', () => {
+      const trie = new Trie();
+      trie.insert('cat');
+      assert.equal(trie.count, 1);
+      trie.insert('dog');
+      assert.equal(trie.count, 2);
+      trie.insert('cat');
+      assert.equal(trie.count, 2);
+    })
   });
 
   describe('SUGGEST', () => {
-    it('Should take in a string', () => {  
+    it('Should take in a string and return an array', () => {  
       const trie = new Trie();
       trie.insert('pizza');
       trie.insert('apple');
       trie.insert('appeal');
       assert.deepEqual(trie.suggest('piz'), ['pizza']);
     });
+
+    it('Should return an empty array if the suggestion does not match any words in trie', () => {
+      const trie = new Trie();
+      trie.insert('pizza');
+      trie.insert('apple');
+      trie.insert('appeal');
+      assert.deepEqual(trie.suggest('!'), []);
+      assert.deepEqual(trie.suggest('zzz'), []);
+    })
 
     it('Should suggest all words matching the suggestion (small sample)', () => {
       const trie = new Trie();
@@ -81,10 +100,10 @@ describe('Trie', () => {
   });
 
   describe('POPULATE', () => {
-    it('Should insert 235886 words from dictionary', () => {
+    it('Should insert 234371 (235886 if not all lowercased) words from dictionary', () => {
       const trie = new Trie();
       trie.populate(dictionary);
-      assert.equal(trie.count, 235886);
+      assert.equal(trie.count, 234371);
     });
   });
 
@@ -97,6 +116,23 @@ describe('Trie', () => {
       trie.suggest('app');
       trie.select('appeal');
       assert.deepEqual(trie.suggest('app'), ['appeal', 'apple']);
+    });
+
+    it('Should select a word from SUGGEST and give that word priority for next SUGGEST (small sample)', () => {
+      const trie = new Trie();
+      trie.insert('pizza');
+      trie.insert('apple');
+      trie.insert('appeal');
+      assert.deepEqual(trie.suggest('app'), ['apple', 'appeal']);
+      trie.select('appeal');
+      assert.equal(trie.root.children.a.children.p.children.p.children.e.children.a.children.l.popularity, 1)
+      assert.deepEqual(trie.suggest('app'), ['appeal', 'apple']);
+      trie.suggest('app');
+      trie.select('apple');
+      trie.select('apple');
+      assert.equal(trie.root.children.a.children.p.children.p.children.l.children.e.popularity, 2)
+      assert.deepEqual(trie.suggest('app'), ['apple', 'appeal']);
+
     });
 
     it('Should select a word from SUGGEST and give that word priority for next SUGGEST (large sample)', () => {
