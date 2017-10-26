@@ -109,6 +109,12 @@ describe('Trie', () => {
   });
 
   describe('POPULATE', () => {
+    it('Should insert a small array of words and increase count', () => {
+      const trie = new Trie();
+      trie.populate(['pize', 'pizza', 'pizzeria', 'pizzicato', 'pizzle']);
+      assert.equal(trie.count, 5);
+    });
+
     it('Should insert 234371 (235886 if not all lowercased) words from dictionary', () => {
       const trie = new Trie();
       trie.populate(dictionary);
@@ -122,7 +128,7 @@ describe('Trie', () => {
       trie.insert('pizza');
       trie.insert('apple');
       trie.insert('appeal');
-      trie.suggest('app');
+      assert.deepEqual(trie.suggest('app'), ['apple', 'appeal']);
       trie.select('appeal');
       assert.deepEqual(trie.suggest('app'), ['appeal', 'apple']);
     });
