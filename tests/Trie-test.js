@@ -16,7 +16,12 @@ describe('Trie', () => {
     assert.deepEqual(trie.root, new Node(''));
   });
 
-  it('Should have a count prop with a default setting of 0', () => {
+  it('Should have a root node that contains an empty string', () => {
+    const trie = new Trie();
+    assert.deepEqual(trie.root.letter, '');
+  })
+
+  it('Should have a word count of 0', () => {
     const trie = new Trie();
     assert.deepEqual(trie.count, 0);
   });
@@ -47,6 +52,12 @@ describe('Trie', () => {
       assert.equal(trie.root.children.p.children.i.children.z.children.z.children.a.letter, 'a');
     });
 
+    it('should tag the node associatied with the last letter in a word', () => {
+      const trie = new Trie();
+      trie.insert('pizza');
+      assert.equal(trie.root.children.p.children.i.children.z.children.z.children.a.isWord, true);
+    });
+
     it('should not duplicate nodes when words are inserted with existing node creations', () => {
       const trie = new Trie();
       trie.insert('apple');
@@ -70,8 +81,6 @@ describe('Trie', () => {
     it('Should take in a string and return an array', () => {  
       const trie = new Trie();
       trie.insert('pizza');
-      trie.insert('apple');
-      trie.insert('appeal');
       assert.deepEqual(trie.suggest('piz'), ['pizza']);
     });
 
@@ -108,7 +117,7 @@ describe('Trie', () => {
   });
 
   describe('SELECT', () => {
-    it('Should select a word from SUGGEST and give that word priority for next SUGGEST (small sample)', () => {
+    it('Should take in string and returns words that begin with that string (small sample)', () => {
       const trie = new Trie();
       trie.insert('pizza');
       trie.insert('apple');
@@ -118,29 +127,27 @@ describe('Trie', () => {
       assert.deepEqual(trie.suggest('app'), ['appeal', 'apple']);
     });
 
-    it('Should select a word from SUGGEST and give that word priority for next SUGGEST (small sample)', () => {
-      const trie = new Trie();
-      trie.insert('pizza');
-      trie.insert('apple');
-      trie.insert('appeal');
-      assert.deepEqual(trie.suggest('app'), ['apple', 'appeal']);
-      trie.select('appeal');
-      assert.equal(trie.root.children.a.children.p.children.p.children.e.children.a.children.l.popularity, 1)
-      assert.deepEqual(trie.suggest('app'), ['appeal', 'apple']);
-      trie.suggest('app');
-      trie.select('apple');
-      trie.select('apple');
-      assert.equal(trie.root.children.a.children.p.children.p.children.l.children.e.popularity, 2)
-      assert.deepEqual(trie.suggest('app'), ['apple', 'appeal']);
-
-    });
-
-    it('Should select a word from SUGGEST and give that word priority for next SUGGEST (large sample)', () => {
+    it('Should take in string and returns words that begin with that string (large sample)', () => {
       const trie = new Trie();
       trie.populate(dictionary);
       trie.suggest('piz'); //=> ['pize', 'pizza', 'pizzeria', 'pizzicato', 'pizzle']
       trie.select('pizzle');
       assert.deepEqual(trie.suggest('piz'), ['pizzle', 'pize', 'pizza', 'pizzeria', 'pizzicato']);
+    });
+
+    it('Should increase the popularity of the selected word and give those words priority in the list', () => {
+      const trie = new Trie();
+      trie.insert('apple');
+      trie.insert('appeal');
+      trie.insert('appear');
+      assert.deepEqual(trie.suggest('app'), ['apple', 'appeal', 'appear']);
+      trie.select('appeal');
+      assert.equal(trie.root.children.a.children.p.children.p.children.e.children.a.children.l.popularity, 1)
+      assert.deepEqual(trie.suggest('app'), ['appeal', 'apple', 'appear']);
+      trie.select('apple');
+      trie.select('apple');
+      assert.equal(trie.root.children.a.children.p.children.p.children.l.children.e.popularity, 2)
+      assert.deepEqual(trie.suggest('app'), ['apple', 'appeal', 'appear']);
     });
   });
 });
