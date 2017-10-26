@@ -130,7 +130,7 @@ describe('Trie', () => {
     it('Should take in string and returns words that begin with that string (large sample)', () => {
       const trie = new Trie();
       trie.populate(dictionary);
-      trie.suggest('piz'); //=> ['pize', 'pizza', 'pizzeria', 'pizzicato', 'pizzle']
+      assert.deepEqual(trie.suggest('piz'), ['pize', 'pizza', 'pizzeria', 'pizzicato', 'pizzle']);
       trie.select('pizzle');
       assert.deepEqual(trie.suggest('piz'), ['pizzle', 'pize', 'pizza', 'pizzeria', 'pizzicato']);
     });
