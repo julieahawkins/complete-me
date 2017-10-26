@@ -1,0 +1,9 @@
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-image: url('./images/sky-background.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+}

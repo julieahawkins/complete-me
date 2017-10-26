@@ -1,9 +1,7 @@
 const Node = require('./lib/Node.js');
 const Trie = require('./lib/Trie.js');
 
-// import fs from 'fs';
 const text = "./dictionary/words"
-// const dictionary = fs.readFileSync(text).toString().trim().split('\n')
 
 
 module.exports = {
