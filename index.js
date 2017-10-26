@@ -7,18 +7,31 @@ module.exports = {
 }
 
 const wordTrie = new Trie();
-const input  = document.querySelector('input');
 
-wordTrie.populate(['blue', 'green', 'boy', 'gary', 'appeal', 'apple', 'appear']);
+wordTrie.populate(['blue', 'banana', 'green', 'band', 'gary', 'appeal', 'apple', 'appear']);
 
-input.addEventListener('keyup', inputSuggest);
+$('input').on('keyup', inputSuggest);
 
 function inputSuggest() {
-  let suggestions = wordTrie.suggest(input.value);
+  if ($('input').val().length > 2) {
+    let suggestions = wordTrie.suggest($('input').val());
 
+    displayList(suggestions);
+  } else if ($('input').val().length < 1){
+    clearList();
+  }
+}
+
+function displayList(suggestions) {
   suggestions.forEach((word) => {
-    const suggestList = document.querySelector('#suggestions');
-    suggestList.innerHTML += word
-  })
-};
+    $('#suggest-list').append(`<p class="list-item">${word}</p>`);
+  });
+}
+
+function clearList() {
+  $('.list-item').remove();
+}
+
+
+
 
