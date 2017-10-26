@@ -6,4 +6,11 @@ body {
   background-image: url('./images/sky-background.jpg');
   background-size: cover;
   background-repeat: no-repeat;
+  font-size: 16pt;
+}
+
+input {
+  width: 220px;
+  height: 40px;
+  font-size: 14pt;
 }

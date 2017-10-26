@@ -1,13 +1,12 @@
 const Node = require('./lib/Node.js');
 const Trie = require('./lib/Trie.js');
 
-const text = "./dictionary/words"
-
-
 module.exports = {
   Node,
   Trie
 }
+
+const text = "./dictionary/words"
 
 $.get(text, function (data) {
     let words = data;
@@ -18,9 +17,8 @@ $.get(text, function (data) {
 
 const wordTrie = new Trie();
 
-// wordTrie.populate(['blue', 'banana', 'green', 'band', 'gary', 'appeal', 'apple', 'appear']);
-
 $('input').on('keyup', inputSuggest);
+$('#suggest-list').on('click', '.list-item', makeSelection);
 
 function inputSuggest() {
   if ($('input').val().length > 2) {
@@ -40,6 +38,10 @@ function displayList(suggestions) {
 
 function clearList() {
   $('.list-item').remove();
+}
+
+function makeSelection() {
+  wordTrie.select($(this).text());
 }
 
 
